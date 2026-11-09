@@ -1,0 +1,33 @@
+REDIS   equ	$FCBC
+DIGADD	equ	$00F0
+OUTCH	equ	$FE3A
+
+V1	equ	$00A0
+V2	equ	$00A1
+V3	equ	$00A2
+
+OUT1	equ	$00B0
+OUT2	equ	$00B1
+
+	ORG	$00B0
+	FCB	$FF
+	FCB	$FF
+	FCB	$FF
+	FCB	$FF
+
+	ORG	$00A0
+	FCB	$04
+	FCB	$03
+	FCB	$05
+
+*BRA  (FF & 4)
+
+	ORG 	$0000
+	LDAA	#$04
+	BRA	B1
+	NOP
+	WAI
+B1	STAA	OUT2
+	WAI
+
+
