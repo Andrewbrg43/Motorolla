@@ -328,11 +328,11 @@ public class Main {
 
     // printin commands if help command is run
     private static void printHelp() {
-        System.out.println("Commands (all addresses and values are HEX; $ or 0x prefix is optional):");
+        System.out.println("Commands (all addresses and values are HEX, $ or 0x prefix is optional):");
         System.out.println("  loadram <file>      load an S19 file into RAM (sets PC from its S9 record)");
         System.out.println("  loadrom <file>      load an S19 file as ROM (then resets the CPU)");
         System.out.println("  reset               reset the CPU (PC = reset vector at $FFFE/$FFFF)");
-        System.out.println("  step [n]            run 1 instruction (or n instructions, n is decimal)");
+        System.out.println("  step [n]            run 1 instruction");
         System.out.println("  run                 run until WAI, an illegal opcode, or 1,000,000 steps");
         System.out.println("  regs                show A, B, X, SP, PC and the condition codes");
         System.out.println("  mem <addr> [len]    hex dump of memory (default length $40)");
@@ -342,7 +342,7 @@ public class Main {
         System.out.println("  irq / nmi           request an interrupt");
         System.out.println("  clearram            set all RAM to 0");
         System.out.println("  clearrom            remove all ROM contents");
-        System.out.println("  ioport              map a demo output port at $8000");
+        System.out.println("  ioport              map an output port at $8000");
         System.out.println("  help                take a wild guess");
         System.out.println("  quit                exit");
 
