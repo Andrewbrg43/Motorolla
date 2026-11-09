@@ -15,8 +15,6 @@ public class Main {
     public static void main(String[] args) {
         memory = new Memory();
         cpu = new CPU(memory);      // reset cpu when created
-
-        System.out.println("=== Motorola 6800 Simulator (Phase 2) ===");
         System.out.println("Type 'help' for the list of commands.");
         printRegisters();
 
@@ -49,11 +47,11 @@ public class Main {
             try {
                 running = runCommand(command, rest);
             } catch (NumberFormatException e) {
-                System.out.println("Error: that is not a valid hex number.");
+                System.out.println("that is not a valid hex number.");
             }
         }
 
-        System.out.println("Goodbye.");
+        System.out.println("Ok then I dont want you either");
     }
 
     //does a command, returns false if user quits, true otherwise
@@ -61,7 +59,6 @@ public class Main {
         switch (command) {
             case "help":
             case "h":
-            case "?":
                 printHelp();
                 break;
 
