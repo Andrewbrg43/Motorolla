@@ -145,8 +145,6 @@ public class CPU {
         push8(getCCR());
     }
 
-
-
     //reads byte at pc, moves to next
     private int fetch8() {
         int value = memory.read(pc);

@@ -133,7 +133,7 @@ public class Main {
 
             case "ioport":
                 memory.mapIO(0x8000, new DemoPort());
-                System.out.println("Demo output port mapped at $8000. Try: poke 8000 41");
+                System.out.println("Demo output port mapped at $8000.");
                 break;
 
             case "quit":
