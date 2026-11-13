@@ -1,7 +1,12 @@
 package m6800;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Scanner;
+import java.io.File;
+import java.awt.FileDialog;
+import java.awt.Frame;
+
 
 //does not actually run anything, just takes input and calls methods. can type help for instructions
 public class Main {
@@ -63,11 +68,13 @@ public class Main {
                 break;
 
             case "loadram":
-                loadFile(rest, false);
+                System.out.println("Select the file from the window that opened, Check your toolbar");
+                loadFile(false);
                 break;
 
             case "loadrom":
-                loadFile(rest, true);
+                System.out.println("Select the file from the window that opened, Check your toolbar");
+                loadFile(true);
                 break;
 
             case "reset":
@@ -149,37 +156,47 @@ public class Main {
     }
 
     //loadram and rom, loads file
-    private static void loadFile(String filename, boolean asRom) {
-        if (filename.length() == 0) {
-            System.out.println("Usage: " + (asRom ? "loadrom" : "loadram") + " <file.s19>");
+    private static void loadFile(boolean asRom) {
+
+        File selectedFile = chooseFile(asRom);
+
+        if (selectedFile == null) {
+            System.out.println("File selection cancelled.");
             return;
         }
 
+        String filename = selectedFile.getAbsolutePath();
+
         try {
-            S19Loader.Result result = S19Loader.load(filename, memory, asRom);
+            S19Loader.Result loadResult =
+                    S19Loader.load(selectedFile.getAbsolutePath(), memory, asRom);
 
-            System.out.println("Loaded " + result.bytesLoaded + " bytes as "
-                    + (asRom ? "ROM" : "RAM") + " from " + filename);
+            System.out.println("Loaded " + loadResult.bytesLoaded + " bytes as "
+                    + (asRom ? "ROM" : "RAM") + " from "
+                    + selectedFile.getName());
 
-            if (result.bytesSkipped > 0) {
+            if (loadResult.bytesSkipped > 0) {
                 System.out.println(String.format(
                         "WARNING: %d bytes could not be stored (first one at $%04X)."
                                 + " That address is not RAM.",
-                        result.bytesSkipped, result.firstSkippedAddress));
+                        loadResult.bytesSkipped, loadResult.firstSkippedAddress));
             }
 
             if (asRom) {
-                // reset cpu so it does the reset vector from the ROM.
                 cpu.reset();
                 System.out.println(String.format(
-                        "CPU reset after ROM load. PC = $%04X (from the reset vector).", cpu.getPC()));
-            } else if (result.startAddress != -1) {
-                // record holds the program's start address, so point PC there.
-                cpu.setPC(result.startAddress);
+                        "CPU reset after ROM load. PC = $%04X (from the reset vector).",
+                        cpu.getPC()));
+
+            } else if (loadResult.startAddress != -1) {
+                cpu.setPC(loadResult.startAddress);
                 cpu.clearStopState();
+
                 System.out.println(String.format(
-                        "PC set to $%04X (start address from the S9 record).", result.startAddress));
+                        "PC set to $%04X (start address from the S9 record).",
+                        loadResult.startAddress));
             }
+
         } catch (IOException e) {
             System.out.println("Could not load file: " + e.getMessage());
         }
@@ -325,6 +342,30 @@ public class Main {
                     String.format("%02X", Memory.DUMMY_VALUE) + ")";
         }
     }
+    private static File chooseFile(boolean asRom) {
+
+        FileDialog dialog = new FileDialog(
+                (Frame) null,
+                asRom ? "Select ROM File" : "Select RAM File",
+                FileDialog.LOAD
+        );
+
+        dialog.setFilenameFilter((dir, name) ->
+                name.toLowerCase().endsWith(".s19"));
+
+        dialog.setVisible(true);
+
+        String filename = dialog.getFile();
+        String directory = dialog.getDirectory();
+
+        dialog.dispose();
+
+        if (filename == null || directory == null) {
+            return null;
+        }
+
+        return new File(directory, filename);
+    }
 
     // printin commands if help command is run
     private static void printHelp() {
@@ -347,6 +388,7 @@ public class Main {
         System.out.println("  quit                exit");
 
     }
+
 
 
 
